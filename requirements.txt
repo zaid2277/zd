@@ -1,4 +1,6 @@
 streamlit
 google-earth-engine
-geemap
-streamlit-folium
+geemap==0.32.0
+streamlit-folium==0.16.1
+python-box==6.1.0
+xyzservices==2023.10.1
