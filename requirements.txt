@@ -1,3 +1,4 @@
 streamlit
-earthengine-api
+google-earth-engine
 geemap
+streamlit-folium
