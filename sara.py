@@ -94,8 +94,7 @@ if run_analysis and st.session_state.get('ee_initialized'):
 
 # إطلاق الخريطة التفاعلية وعرضها في وسط شاشة الموقع
 Map.to_streamlit(height=600)
-# 6. حساب المساحات الدقيقة بالكيلومتر المربع عند رسم مضلع
-        if isPolygon:
+if isPolygon:
             areaLandImage = ee.Image.pixelArea().updateMask(oilOnLand)
             statsLand = areaLandImage.reduceRegion(reducer=ee.Reducer.sum(), geometry=roi, scale=20, maxPixels=1e9)
             resultLand = statsLand.getInfo().get('area')
@@ -125,3 +124,4 @@ Map.to_streamlit(height=600)
 Map.to_streamlit(height=600
 
        
+  
