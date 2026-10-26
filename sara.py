@@ -121,7 +121,7 @@ else:
     st.warning("⚠️ To calculate the exact area in km², please draw a polygon over the colored spot on the map.")
 
 # إطلاق الخريطة التفاعلية وعرضها في وسط شاشة الموقع
-Map.to_streamlit(height=600
+Map.to_streamlit(height=600)
 
        
   
