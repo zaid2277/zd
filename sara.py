@@ -1,38 +1,39 @@
-import streamlit as st
+mport streamlit as st
 import ee
 import geemap
 import pandas as pd
 from datetime import datetime
 import os
-import json
 
 # 1. إعدادات واجهة الويب الاحترافية لنظام سارة
 st.set_page_config(page_title="نظام مراقبة التلوث المتقدم", layout="wide")
 st.markdown("<h2 style='text-align: center; color: #CC0000;'>🔍 النظام الوطني المؤتمت لمراقبة التلوث النفطي (سارة)</h2>", unsafe_allow_html=True)
 
-# 2. تفعيل السيرفر السحابي وإجبار النظام على قراءة EARTHENGINE_TOKEN الشخصي
+# 2. تفعيل السيرفر السحابي وحقن الـ Token الشخصي بدقة داخل ملف النظام
 if 'ee_initialized' not in st.session_state:
     st.session_state['ee_initialized'] = False
 
 if not st.session_state['ee_initialized']:
     try:
-        # قراءة التوكن من الـ Secrets وحقنه في نظام السيرفر ليتعرف عليه إيرث انجن تلقائياً
+        # قراءة النص الصافي للمفتاح من الـ Secrets
         token_content = st.secrets["EARTHENGINE_TOKEN"]
         
-        # إنشاء المجلد السري الخاص بقوقل داخل السيرفر سحابياً وتخزين التوكن فيه
+        # تحديد المسار السري الافتراضي لقوقل إيرث انجن داخل السيرفر
         credential_dir = os.path.expanduser('~/.config/earthengine')
         if not os.path.exists(credential_dir):
             os.makedirs(credential_dir)
             
-        with open(os.path.join(credential_dir, 'credentials'), 'w') as f:
-            f.write(token_content)
+        # كتابة النص بدقة داخل ملف credentials بدون أي زيادات
+        credential_file = os.path.join(credential_dir, 'credentials')
+        with open(credential_file, 'w', encoding='utf-8') as f:
+            f.write(str(token_content).strip())
             
-        # تفعيل خوادم إيرث انجن الآن بأمان
+        # تفعيل خوادم إيرث انجن تلقائياً الآن
         ee.Initialize()
         st.session_state['ee_initialized'] = True
     except Exception as e:
         st.error(f"❌ خطأ حرج في تهيئة الصلاحيات الشخصية: {e}")
-        st.info("💡 نصيحة: يرجى مراجعة إعدادات مربع الـ Secrets للتأكد من نقل الـ Token بالصيغة الصحيحة.")
+        st.info("💡 نصيحة: يرجى مراجعة إعدادات مربع الـ Secrets للتأكد من نقل الـ Token بالصيغة الصحيحة كاملاً.")
 
 # 3. لا يتم تشغيل باقي البرنامج إلا إذا نجح تفعيل الاتصال تماماً
 if st.session_state['ee_initialized']:
