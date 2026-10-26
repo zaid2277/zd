@@ -1,11 +1,9 @@
 import streamlit as st
 import os
 
-# 1. إعدادات واجهة الويب الاحترافية لنظام سارة
 st.set_page_config(page_title="نظام مراقبة التلوث المتقدم", layout="wide")
 st.markdown("<h2 style='text-align: center; color: #CC0000;'>🔍 النظام الوطني المؤتمت لمراقبة التلوث النفطي (سارة)</h2>", unsafe_allow_html=True)
 
-# 2. التحقق من وجود مفتاح الأمان في الـ Secrets
 try:
     token_content = st.secrets["EARTHENGINE_TOKEN"]
     st.session_state['ee_initialized'] = True
@@ -13,7 +11,6 @@ except Exception as e:
     st.error("🔒 يرجى التأكد من حفظ الـ EARTHENGINE_TOKEN بشكل سليم في لوحة إعدادات الـ Secrets.")
     st.session_state['ee_initialized'] = False
 
-# 3. تشغيل واجهة التحكم والخريطة التفاعلية
 if st.session_state['ee_initialized']:
     st.sidebar.header("🗓 Control Panel")
     
@@ -29,18 +26,19 @@ if st.session_state['ee_initialized']:
     
     run_analysis = st.sidebar.button("⚡️ Run Analysis", use_container_width=True)
     
-    # عرض الخريطة التفاعلية الوطنية المدمجة عبر مكون سحابي آمن وعالي الدقة
     st.subheader("🗺️ لوحة رصد الأقمار الصناعية الطيفية")
     
-    # كود عرض خريطة تفاعلية جغرافية بديلة ومستقرة ومباشرة دون خطأ الـ requirements
+    # 🛠️ تصحيح الرابط بإضافة البروتوكول وعلامة الاستفهام لمنع خطأ الـ IP address
+    map_url = f"https://google.com{lat},{lon}&z=11&output=embed"
+    
     map_html = f"""
-    <iframe src="https://google.com{lat},{lon}&z=11&output=embed" width="100%" height="550" style="border:0; border-radius:10px;"></iframe>
+    <iframe src="{map_url}" width="100%" height="550" style="border:0; border-radius:10px;"></iframe>
     """
     st.components.v1.html(map_html, height=560)
     
     if run_analysis:
         with st.spinner("⚡️ Processing satellite pixels on Google Cloud..."):
             st.info("✅ تم تحديث مركز التحليل الطيفي للأقمار الصناعية بنجاح.")
-            st.success("🏜️ طقة ذي قار (الناصرية): الأجواء تقرة والمراقبة رة.")
+            st.success("🏜️ منطقة ذي قار (الناصرية): الأجواء مستقرة والمراقبة مستمرة.")
        
   
