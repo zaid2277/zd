@@ -1,5 +1,5 @@
 import streamlit as st
-//import ee
+
 import geemap.foliumap as geemap
 import pandas as pd
 from datetime import datetime
