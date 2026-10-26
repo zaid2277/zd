@@ -128,10 +128,10 @@ if st.session_state['ee_initialized']:
                 st.warning("⚠️ To calculate the exact area in km², please draw a polygon over the colored spot on the map.")
     
 # استدعاء دالة العرض المتوافقة سحابياً
-from streamlit_folium import st_folium
+    from streamlit_folium import st_folium
 
 # إطلاق الخريطة التفاعلية بشكل مرئي كامل في وسط شاشة الموقع
-st_folium(Map, width=1100, height=600)
+    st_folium(Map, width=1100, height=600)
 
 
    
