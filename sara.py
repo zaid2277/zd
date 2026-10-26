@@ -89,8 +89,8 @@ if run_analysis and st.session_state.get('ee_initialized'):
         
         Map.addLayer(oilInWater.updateMask(oilInWater), {'palette': ['#FF0000']}, 'Oil In Water (Red)')
         Map.addLayer(oilOnLand.updateMask(oilOnLand), {'palette': ['#FF9900']}, 'Oil On Land (Orange)')
-            st.info("✅ Map center updated to the specified coordinates.")
-            st.warning("⚠️ To calculate the exact area in km², please draw a polygon over the colored spot on the map.")
+        st.info("✅ Map center updated to the specified coordinates.")
+        st.warning("⚠️ To calculate the exact area in km², please draw a polygon over the colored spot on the map.")
 
 # إطلاق الخريطة التفاعلية وعرضها في وسط شاشة الموقع
 Map.to_streamlit(height=600)
