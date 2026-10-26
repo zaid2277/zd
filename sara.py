@@ -3,7 +3,7 @@ import ee
 import geemap
 import pandas as pd
 from datetime import datetime
-from streamlit_folium import st_folium
+
 import os
 
 # 1. إعدادات واجهة الويب الاحترافية لنظام سارة
@@ -127,8 +127,13 @@ if st.session_state['ee_initialized']:
                 st.info("✅ Map center updated to the specified coordinates.")
                 st.warning("⚠️ To calculate the exact area in km², please draw a polygon over the colored spot on the map.")
     
-    # إطلاق الخريطة التفاعلية وعرضها في وسط شاشة الموقع
-    st_folium(Map, width=1000, height=600)
+    # استدعاء دالة العرض المتوافقة سحابياً
+     from streamlit_folium import st_folium
+
+# إطلاق الخريطة التفاعلية بشكل مرئي كامل في وسط شاشة الموقع
+    st_folium(Map, width=1100, height=600)
+
+   
 else:
     st.warning("🔒 جاري معالجة الرموز الشخصية، إذا استمرت هذه الرسالة يرجى التأكد من حفظ الـ Secrets بشكل سليم في لوحة النصة.")
        
