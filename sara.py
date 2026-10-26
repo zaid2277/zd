@@ -116,9 +116,9 @@ if isPolygon:
                     st.error(f"⚠️ SARA Target Area: {km2_land:.4f} km² (Active Hazard)")
                 else:
                     st.success("🟢 SARA Area: Safe and stable.")
-        else:
-            st.info("✅ Map center updated to the specified coordinates.")
-            st.warning("⚠️ To calculate the exact area in km², please draw a polygon over the colored spot on the map.")
+else:
+    st.info("✅ Map center updated to the specified coordinates.")
+    st.warning("⚠️ To calculate the exact area in km², please draw a polygon over the colored spot on the map.")
 
 # إطلاق الخريطة التفاعلية وعرضها في وسط شاشة الموقع
 Map.to_streamlit(height=600
