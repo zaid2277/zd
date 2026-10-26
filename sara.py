@@ -24,7 +24,7 @@ if 'ee_initialized' not in st.session_state:
         ee.Initialize(scoped_credentials, project='sara-503113')
         st.session_state['ee_initialized'] = True
     except Exception as e:
-        st.error(f"فشل الاتصال الآمن بـ Google Earth Engine: {e}")
+        st.error(f"فشل الاتصال بـ Google Earth Engine: {e}")
         st.info("يرجى التأكد من تفعيل الاتصال وسماح الصلاحيات في لوحة تحكم السيرفر.")
 
 # 3. إعدادات التحكم والتواريخ في اللوحة الجانبية (Sidebar)
