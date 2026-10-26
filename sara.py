@@ -9,27 +9,13 @@ from google.oauth2 import service_account
 st.set_page_config(page_title="نظام مراقبة التلوث المتقدم", layout="wide")
 st.markdown("<h2 style='text-align: center; color: #CC0000;'>🔍 النظام الوطني المؤتمت لمراقبة التلوث النفطي (سارة)</h2>", unsafe_allow_html=True)
 
-# 2. تفعيل السيرفر السحابي الآمن والربط السحابي القياسي المباشر
+# 2. تفعيل السيرفر السحابي تلقائياً باستخدام المفتاح الشخصي من Secrets
 if 'ee_initialized' not in st.session_state:
-    st.session_state['ee_initialized'] = False
-
-if not st.session_state['ee_initialized']:
     try:
-        # قراءة المفتاح الخدمي من إعدادات Streamlit Secrets
-        credentials_info = st.secrets["gee_service_account"]
-        
-        # إنشاء الصلاحيات بالطريقة السحابية المباشرة الموصى بها
-        credentials = service_account.Credentials.from_service_account_info(
-            credentials_info,
-            scopes=['https://googleapis.com']
-        )
-        
-        # التهيئة المباشرة بتمرير الصلاحيات والمشروع معاً في سطر واحد
-        ee.Initialize(credentials=credentials, project='sara-503113')
+        ee.Initialize()
         st.session_state['ee_initialized'] = True
     except Exception as e:
-        st.error(f"❌ خطأ حرج في تهيئة الصلاحيات: {e}")
-        st.info("💡 نصيحة: يرجى مراجعة إعدادات مربع الـ Secrets للتأكد من نقل تاح الحساب الخدمي بدقة.")
+        st.error(f"❌ فشل الاتصال بخوادم إيرث انجن: {e}")
 
 # 3. لا يتم تشغيل باقي البرنامج إلا إذا نجح تفعيل الاتصال تماماً
 if st.session_state['ee_initialized']:
