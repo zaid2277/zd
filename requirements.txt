@@ -1,3 +1,3 @@
 streamlit
-earthengine-api
-geema
+google-earth-engine
+geemap
