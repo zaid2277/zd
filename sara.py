@@ -127,7 +127,7 @@ if st.session_state['ee_initialized']:
                 st.warning("⚠️ To calculate the exact area in km², please draw a polygon over the colored spot on the map.")
     
     # إطلاق الخريطة التفاعلية وعرضها في وسط شاشة الموقع
-    Map
+    Map.to_streamlit(height=600, bidirectional=True)
 else:
     st.warning("🔒 جاري معالجة الرموز الشخصية، إذا استمرت هذه الرسالة يرجى التأكد من حفظ الـ Secrets بشكل سليم في لوحة النصة.")
        
