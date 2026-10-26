@@ -4,7 +4,6 @@ import geemap
 import pandas as pd
 from datetime import datetime
 import os
-from streamlit_folium import st_folium
 
 st.set_page_config(page_title="نظام مراقبة التلوث المتقدم", layout="wide")
 st.markdown("<h2 style='text-align: center; color: #CC0000;'>🔍 النظام الوطني المؤتمت لمراقبة التلوث النفطي (سارة)</h2>", unsafe_allow_html=True)
@@ -114,8 +113,9 @@ if st.session_state['ee_initialized']:
                 st.info("✅ Map center updated to the specified coordinates.")
                 st.warning("⚠️ To calculate the exact area in km², please draw a polygon over the colored spot on the map.")
     
-    st_folium(Map, width=1100, height=600)
+    # طريقة العرض البديلة والذكية دون أي مكتبات وسيطة
+    Map.to_html(st_component=True, width=1100, height=600)
 else:
-    st.warning("🔒 جاري معالإذا استمرت هذه جى التأكد من حفظ الـ Secrets بشكل سليم في لوحة النصة.")
+    st.warning("🔒 جاري معالجة الرموز الشخصية، إذا استمرت هذه الرسالة يرجى التأكد من حفظ الـ Secrets بشكل سليم في لوحة الصة.")
        
   
