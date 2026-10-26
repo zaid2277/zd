@@ -10,15 +10,18 @@ from google.oauth2 import service_account
 st.set_page_config(page_title="نظام مراقبة التلوث المتقدم", layout="wide")
 st.markdown("<h2 style='text-align: center; color: #CC0000;'>🔍 النظام الوطني المؤتمت لمراقبة التلوث النفطي (سارة)</h2>", unsafe_allow_html=True)
 
-# 2. تفعيل السيرفر السحابي الآمن وربطه بالـ Secrets والحساب الخدمي المعتمد
+# 2. تفعيل السيرفر السحابي الآمن وربطه بالـ Secrets مع إضافة الصلاحيات الرسمية (Scopes)
 if 'ee_initialized' not in st.session_state:
     try:
-        # قراءة المفتاح الخدمي الذي حفظناه في إعدادات Streamlit Secrets
+        # قراءة المفتاح الخدمي من إعدادات Streamlit Secrets
         credentials_info = st.secrets["gee_service_account"]
-        credentials = service_account.Credentials.from_service_account_info(credentials_info)
         
-        # تهيئة إيرث انجن وتمرير المفتاح واسم المشروع المعتمد تلقائياً
-        ee.Initialize(credentials, project='sara-503113')
+        # إنشاء صلاحية الدخول مع إجبار السيرفر على استخدام صلاحية Earth Engine الرسمية
+        credentials = service_account.Credentials.from_service_account_info(credentials_info)
+        scoped_credentials = credentials.with_scopes(['https://googleapis.com'])
+        
+        # تهيئة إيرث انجن بتمرير الصلاحية المحددة (Scoped Credentials) مع اسم المشروع
+        ee.Initialize(scoped_credentials, project='sara-503113')
         st.session_state['ee_initialized'] = True
     except Exception as e:
         st.error(f"فشل الاتصال الآمن بـ Google Earth Engine: {e}")
