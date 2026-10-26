@@ -116,6 +116,6 @@ if st.session_state['ee_initialized']:
     
     st_folium(Map, width=1100, height=600)
 else:
-    st.warning("🔒 جاري معالجة الرموز الشخصية، إذا استمرت هذه الرسالة يرجى التأكد من حفظ الـ Secrets بشكل سليم في لوحة النصة.")
+    st.warning("🔒 جاري معالإذا استمرت هذه الرسالة يرجى التأكد من حفظ الـ Secrets بشكل سليم في لوحة النصة.")
        
   
