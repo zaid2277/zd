@@ -1,21 +1,31 @@
 import streamlit as st
 import ee
-import geemap.foliumap as geemap
+# 🛠️ حل مشكلة الـ BoxKeyError: استيراد geemap مباشرة دون استخدام foliumap التالف
+import geemap
 import pandas as pd
 from datetime import datetime
+from google.oauth2 import service_account
 
 # 1. إعدادات واجهة الويب الاحترافية للنائب والمؤسسات البيئية العالمية
 st.set_page_config(page_title="نظام مراقبة التلوث المتقدم", layout="wide")
 st.markdown("<h2 style='text-align: center; color: #CC0000;'>🔍 النظام الوطني المؤتمت لمراقبة التلوث النفطي (سارة)</h2>", unsafe_allow_html=True)
 
-# 2. تفعيل السيرفر السحابي الآمن مع ربطه بمشروعك المعتمد في إيرث انجن
-try:
-    ee.Initialize(project='sara-503113')
-except Exception as e:
-    st.error("يرجى التأكد من تفعيل الاتصال وسماح الصلاحيات لسيرفر Google Earth Engine.")
+# 2. تفعيل السيرفر السحابي الآمن وربطه بالـ Secrets والحساب الخدمي المعتمد
+if 'ee_initialized' not in st.session_state:
+    try:
+        # قراءة المفتاح الخدمي الذي حفظناه في إعدادات Streamlit Secrets
+        credentials_info = st.secrets["gee_service_account"]
+        credentials = service_account.Credentials.from_service_account_info(credentials_info)
+        
+        # تهيئة إيرث انجن وتمرير المفتاح واسم المشروع المعتمد تلقائياً
+        ee.Initialize(credentials, project='sara-503113')
+        st.session_state['ee_initialized'] = True
+    except Exception as e:
+        st.error(f"فشل الاتصال الآمن بـ Google Earth Engine: {e}")
+        st.info("يرجى التأكد من تفعيل الاتصال وسماح الصلاحيات في لوحة تحكم السيرفر.")
 
 # 3. إعدادات التحكم والتواريخ في اللوحة الجانبية (Sidebar)
-st.sidebar.header("🗓️ Control Panel")
+st.sidebar.header("🗓 Control Panel")
 
 # إعداد خيار السنة "year"
 year = st.sidebar.selectbox("year", ["2026", "2025", "2024", "2023"])
@@ -52,7 +62,7 @@ else:
     roi = ee.Geometry.Point([lon, lat]).buffer(2000)
 
 # 5. معالجة الخوارزمية الحسابية والمساحات طيفياً عند الضغط على الزر
-if run_analysis:
+if run_analysis and st.session_state.get('ee_initialized'):
     with st.spinner("⚡️ Processing satellite pixels on Google Cloud..."):
         
         # ربط السلسلة الزمنية باستخدام الرموز الجديدة الموحدة
@@ -79,8 +89,12 @@ if run_analysis:
         
         Map.addLayer(oilInWater.updateMask(oilInWater), {'palette': ['#FF0000']}, 'Oil In Water (Red)')
         Map.addLayer(oilOnLand.updateMask(oilOnLand), {'palette': ['#FF9900']}, 'Oil On Land (Orange)')
-        
-        # 6. حساب المساحات الدقيقة بالكيلومتر المربع عند رسم مضلع
+            st.info("✅ Map center updated to the specified coordinates.")
+            st.warning("⚠️ To calculate the exact area in km², please draw a polygon over the colored spot on the map.")
+
+# إطلاق الخريطة التفاعلية وعرضها في وسط شاشة الموقع
+Map.to_streamlit(height=600)
+
         if isPolygon:
             areaLandImage = ee.Image.pixelArea().updateMask(oilOnLand)
             statsLand = areaLandImage.reduceRegion(reducer=ee.Reducer.sum(), geometry=roi, scale=20, maxPixels=1e9)
@@ -93,15 +107,16 @@ if run_analysis:
             
             with col1:
                 if km2_land > 0:
-                    st.error(f"🏜️ Polluted Land Area: {km2_land:.4f} km²")
+                    st.error(f"🏜 Polluted Land Area: {km2_land:.4f} km²")
                 else:
-                    st.success("🏜️ Land Area: Safe. No oil pollution detected inside the drawn area.")
+                    st.success("🏜 Land Area: Safe. No oil pollution detected inside the drawn area.")
                     
             with col2:
+                # 🛠️ تصحيح الخطأ الإملائي البرمجي في بناء السطر (تنظيم البنية الشرطية للـ if)
                 if km2_land > 0:
                     st.error(f"⚠️ SARA Target Area: {km2_land:.4f} km² (Active Hazard)")
                 else:
-                    st.success("🟢 SARA Area:  and stable.")
+                    st.success("🟢 SARA Area: Safe and stable.")
         else:
             st.info("✅ Map center updated to the specified coordinates.")
             st.warning("⚠️ To calculate the exact area in km², please draw a polygon over the colored spot on the map.")
