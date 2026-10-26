@@ -12,7 +12,7 @@ st.markdown("<h2 style='text-align: center; color: #CC0000;'>🔍 النظام �
 # 2. تفعيل السيرفر السحابي تلقائياً باستخدام المفتاح الشخصي من Secrets
 if 'ee_initialized' not in st.session_state:
     try:
-        ee.Initialize()
+        ee.Initialize(project='sara-503113')
         st.session_state['ee_initialized'] = True
     except Exception as e:
         st.error(f"❌ فشل الاتصال بخوادم إيرث انجن: {e}")
