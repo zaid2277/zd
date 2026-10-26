@@ -29,7 +29,7 @@ if not st.session_state['ee_initialized']:
             f.write(str(token_content).strip())
             
         # تفعيل خوادم إيرث انجن تلقائياً الآن
-        ee.Initialize()
+        ee.Initialize(project='sara-503113')
         st.session_state['ee_initialized'] = True
     except Exception as e:
         st.error(f"❌ خطأ حرج في تهيئة الصلاحيات الشخصية: {e}")
