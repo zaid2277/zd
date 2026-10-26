@@ -3,19 +3,36 @@ import ee
 import geemap
 import pandas as pd
 from datetime import datetime
-from google.oauth2 import service_account
+import os
+import json
 
 # 1. إعدادات واجهة الويب الاحترافية لنظام سارة
 st.set_page_config(page_title="نظام مراقبة التلوث المتقدم", layout="wide")
 st.markdown("<h2 style='text-align: center; color: #CC0000;'>🔍 النظام الوطني المؤتمت لمراقبة التلوث النفطي (سارة)</h2>", unsafe_allow_html=True)
 
-# 2. تفعيل السيرفر السحابي تلقائياً باستخدام المفتاح الشخصي من Secrets
+# 2. تفعيل السيرفر السحابي وإجبار النظام على قراءة EARTHENGINE_TOKEN الشخصي
 if 'ee_initialized' not in st.session_state:
+    st.session_state['ee_initialized'] = False
+
+if not st.session_state['ee_initialized']:
     try:
-        ee.Initialize(project='sara-503113')
+        # قراءة التوكن من الـ Secrets وحقنه في نظام السيرفر ليتعرف عليه إيرث انجن تلقائياً
+        token_content = st.secrets["EARTHENGINE_TOKEN"]
+        
+        # إنشاء المجلد السري الخاص بقوقل داخل السيرفر سحابياً وتخزين التوكن فيه
+        credential_dir = os.path.expanduser('~/.config/earthengine')
+        if not os.path.exists(credential_dir):
+            os.makedirs(credential_dir)
+            
+        with open(os.path.join(credential_dir, 'credentials'), 'w') as f:
+            f.write(token_content)
+            
+        # تفعيل خوادم إيرث انجن الآن بأمان
+        ee.Initialize()
         st.session_state['ee_initialized'] = True
     except Exception as e:
-        st.error(f"❌ فشل الاتصال بخوادم إيرث انجن: {e}")
+        st.error(f"❌ خطأ حرج في تهيئة الصلاحيات الشخصية: {e}")
+        st.info("💡 نصيحة: يرجى مراجعة إعدادات مربع الـ Secrets للتأكد من نقل الـ Token بالصيغة الصحيحة.")
 
 # 3. لا يتم تشغيل باقي البرنامج إلا إذا نجح تفعيل الاتصال تماماً
 if st.session_state['ee_initialized']:
@@ -78,6 +95,7 @@ if st.session_state['ee_initialized']:
             
             oilInWater = b2_lt.And(b3_lt).And(b4_lt).And(waterMask)
             oilOnLand = b2_lt.And(b3_lt).And(b4_lt).And(b11_gt).And(dryLandMask)
+            
             Map.addLayer(oilInWater.updateMask(oilInWater), {'palette': ['#FF0000']}, 'Oil In Water (Red)')
             Map.addLayer(oilOnLand.updateMask(oilOnLand), {'palette': ['#FF9900']}, 'Oil On Land (Orange)')
             
@@ -110,6 +128,6 @@ if st.session_state['ee_initialized']:
     # إطلاق الخريطة التفاعلية وعرضها في وسط شاشة الموقع
     Map.to_streamlit(height=600)
 else:
-    st.warning("🔒 يرجى إصلاح خطأ الاتصال بالحساب الخدمي في إعدادات المنصة أولاً لتتمكن اللوحة من تحميل الخرائط.")
+    st.warning("🔒 جاري معالجة الرموز الشخصية، إذا استمرت هذه الرسالة يرجى التأكد من حفظ الـ Secrets بشكل سليم في لوحة النصة.")
        
   
